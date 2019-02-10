@@ -1,0 +1,14 @@
+student view grade
+student ask question
+student take test
+professor modify grade
+professor answer question
+professor grade test
+professor open room
+janitor clean room
+janitor open room
+lecturer teach class
+lecturer answer question
+president rule school
+grad register gradcourse
+president register gradcourse
