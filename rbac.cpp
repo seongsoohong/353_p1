@@ -9,8 +9,8 @@ int main(){
     cout << "WELCOME TO CAL STATE FULLERTON" << endl;
     multimap<string,string> rbac;
     multimap<string,string>::iterator it;
-
     fstream URA;
+    //read in URA.txt and store on 'rbac' as multimap<name,role>
     URA.open("URA.txt");
     if(URA.is_open()){
         string name, role;
@@ -24,13 +24,15 @@ int main(){
     string user;
     vector<string> user_role;
     bool loggedin = false;
-    while(loggedin == false){
+    
+    while(loggedin == false){ // check and loop while typed user name can't not be found in rbac(URA.txt)
         cout << "login: ";
         cin >> user;
-        for(it=rbac.begin(); it!=rbac.end(); it++){
-            if(it->first == user){
+        for(it=rbac.begin(); it!=rbac.end(); it++){  
+            if(it->first == user){ 
                 cout << "Welcome " << user << endl;
                 pair<multimap<string,string>::iterator, multimap<string,string>::iterator>  role_range = rbac.equal_range(user);
+                //store roles of logged in user.
                 for(multimap<string,string>::iterator itr = role_range.first; itr != role_range.second; itr++){
                     user_role.push_back(itr->second);  
                 }
@@ -38,7 +40,7 @@ int main(){
                 break;
             }
         }
-        if(!loggedin){
+        if(!loggedin){ 
             cout << "ERROR: user " << user << " is not in the database" << endl;
         }
         
@@ -48,7 +50,7 @@ int main(){
     multimap<string,string> role_action;
     multimap<string,string>::iterator it2;
     fstream PRA;
-   
+   //read from PRA.txt and store to capability of each role can do.
     PRA.open("PRA.txt");
     string action, role, object;
     if(PRA.is_open()){
@@ -64,6 +66,7 @@ int main(){
      int num =0;
     
      int count =0;
+     // read from HR.txt and store hierachy of roles. 
      HR.open("HR.txt");
      if(HR.is_open()){
          string s_role, j_role;
@@ -73,6 +76,7 @@ int main(){
             while(!HR.eof()){
                 HR >> s_role >> j_role;
                 num++;
+                //store all the capable actions of junior role to senior role.
                 pair<multimap<string,string>::iterator, multimap<string,string>::iterator>  action_range = role_action.equal_range(j_role);
                 for(multimap<string,string>::iterator ita = action_range.first; ita != action_range.second; ita++){
                     hr_action.push_back(ita->second);
@@ -86,22 +90,25 @@ int main(){
             HR.seekg(0) ;
             count++;
             
-         }while( count < (num-(count-1)*num));
+         }while( count < (num-(count-1)*num)); //loop for each level of hierchy.
          HR.close();
     }
     string command;
+    //give command and check if the user have access to execute the command
     while(true){
         bool access = false;
         cout << "give command  (\"exit program\") to exit " << endl;
         cin >> action >> object;
         command = action + object;
-        if(command == "exitprogram") break;
+        if(command == "exitprogram") break;  // type exit program to end program
+        //check what permsiion user's role has.
         vector<string> permit_role;
         for(multimap<string,string>::iterator it = role_action.begin(); it != role_action.end(); it++){
             if(it->second == command){
                 permit_role.push_back(it->first);
             }
         }
+        //check if the command matchs permission of user's role
         vector<string> match_role;
         bool t = false;
         for(string pr : permit_role){
